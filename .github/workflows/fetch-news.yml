@@ -1,0 +1,25 @@
+name: Fetch Trump News
+
+on:
+  schedule:
+    # Peak hours (8am-10pm EST): Every 30 minutes
+    - cron: '*/30 13-2 * * *'
+    # Off-peak hours (10pm-2am EST): Every hour
+    - cron: '0 3-6 * * *'
+    # Low activity (2am-8am EST): Every 3 hours
+    - cron: '0 7-12/3 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  fetch-news:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Fetch latest news
+        run: |
+          curl -X POST "${{ secrets.SUPABASE_URL }}/functions/v1/scheduled-news-fetch" \
+            -H "Authorization: Bearer ${{ secrets.API_KEY }}" \
+            -H "Content-Type: application/json"
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          API_KEY: ${{ secrets.API_KEY }}

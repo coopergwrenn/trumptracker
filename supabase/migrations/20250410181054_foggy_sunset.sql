@@ -1,0 +1,47 @@
+/*
+  # Create news headlines table
+
+  1. New Tables
+    - `news_headlines`
+      - `id` (uuid, primary key)
+      - `original_title` (text)
+      - `neutral_title` (text)
+      - `original_description` (text)
+      - `neutral_description` (text)
+      - `url` (text, unique)
+      - `published_at` (timestamptz)
+      - `source_name` (text)
+      - `created_at` (timestamptz)
+      - `updated_at` (timestamptz)
+
+  2. Security
+    - Enable RLS on `news_headlines` table
+    - Add policy for authenticated users to read headlines
+*/
+
+CREATE TABLE IF NOT EXISTS news_headlines (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  original_title text NOT NULL,
+  neutral_title text,
+  original_description text,
+  neutral_description text,
+  url text UNIQUE NOT NULL,
+  published_at timestamptz NOT NULL,
+  source_name text NOT NULL,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+
+ALTER TABLE news_headlines ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Authenticated users can read headlines"
+  ON news_headlines
+  FOR SELECT
+  TO authenticated
+  USING (true);
+
+-- Add trigger for updating updated_at
+CREATE TRIGGER update_news_headlines_updated_at
+  BEFORE UPDATE ON news_headlines
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();

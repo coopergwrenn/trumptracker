@@ -1,0 +1,42 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Handle client-side routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = true
+
+# Security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Content-Security-Policy = '''
+      default-src 'self' https://*.supabase.co https://*.netlify.app https://*.trumptracker.ai;
+      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co;
+      style-src 'self' 'unsafe-inline' https://use.typekit.net;
+      img-src 'self' data: https: blob:;
+      font-src 'self' https://use.typekit.net data:;
+      connect-src 'self' 
+        https://*.supabase.co 
+        wss://*.supabase.co 
+        https://*.stripe.com 
+        https://api.openai.com 
+        https://api.twitter.com 
+        https://*.trumptracker.ai;
+      frame-ancestors 'none';
+      form-action 'self';
+    '''
+
+# Domain configuration
+[[redirects]]
+  from = "https://www.trumptracker.ai/*"
+  to = "https://trumptracker.ai/:splat"
+  status = 301
+  force = true
