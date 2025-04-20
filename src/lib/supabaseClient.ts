@@ -4,11 +4,18 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('Missing Supabase environment variables');
   throw new Error('Missing Supabase environment variables');
 }
 
-// Get the current domain
-const domain = window.location.origin;
+// Get the current domain safely
+let domain;
+try {
+  domain = window.location.origin;
+} catch (error) {
+  console.error('Failed to get domain:', error);
+  domain = 'https://trumptracker-git-main-cooper-wrenns-projects.vercel.app';
+}
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
