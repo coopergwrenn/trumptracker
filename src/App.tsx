@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -20,6 +20,10 @@ function AppContent() {
   const location = useLocation();
   const isDashboard = location.pathname === '/dashboard' || location.pathname === '/chat';
   const isShare = location.pathname.startsWith('/share/');
+
+  useEffect(() => {
+    console.log('Current path:', location.pathname);
+  }, [location]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -48,6 +52,10 @@ function AppContent() {
 }
 
 function App() {
+  useEffect(() => {
+    console.log('App mounted');
+  }, []);
+
   return (
     <Router>
       <AuthProvider>
